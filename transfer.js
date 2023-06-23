@@ -126,16 +126,32 @@ app.get('/balances', async (req,res)=>{
 
 //     })
 
-    app.get('/balances:64959ad6b933c9b3c545cf02', async (res, req)=>{
+    app.get('/balances/:accountNumber', async (req, res)=>{
         try {
-            console.log(req.params)
-            const singleBalance = await Balance.findById(req.params.accountNumber)
-            res.status(200).json(singleBalance)
+            // console.log(req.body)
+            const singleBalance = await Balance.findOne({accountNumber:req.body.accountNumber})
+            res.send(singleBalance)
             console.log(singleBalance)
+
         } catch (error) {
             console.log(error)
         }
     })
+
+    // app.get("/balance/:accountNumber", async (req, res) => {
+    //     try {
+      
+    //       const perBalance = await Balance.findOne({
+      
+    //         accountNumber: req.body.accountNumber,
+      
+    //       });
+      
+    //       res.send(perBalance);
+      
+    //     } catch (error) {}
+      
+    //   })
 
 app.listen(3000, () => {
     console.log("Server is running at port 3000");
