@@ -83,48 +83,91 @@ app.get('/balances', async (req,res)=>{
     }
 })
 
-// app.post('/transfer', (req, res)=>{
-//     app.get((req, res)=>{
-//         res.
-//     })
-//     const { error, value} = transfer.validate(req.body);
-//    if (error){
-//     res.status(400).json(error);
-//    }
-//    else{
-//     try{
-//         const balance = new Balance({
-//             accountNumber: accountNumber,
-//             fullName: value.fullName,
-//             balance: value.firstDeposit,
-//             createdAt: `${date}`
-//         });
 
-//         const transaction = new Transaction({
-//             reference: `${reference}`,
-//             senderAccountNumber: ,
-//             AccountNumber: accountNumber,
-//             transferDescription: value.transferDescription,
-//             amount: value.amount,
-//             balance: value.firstDeposit,
-//             createdAt: `${date}`
+app.post("/transfer", async (req,res)=>{
+
+    const {error, value}=transfer.validate(req.body);
+
+    if(error){
+
+        return res.status(400).send(error)}
+        var deposit= value.amount;
+        var senderAccount= value.senderAccount;
+        var transferDescription= value.transferDescription;
+        var receiverAccount= value.receiverAccount;
+        var senderBalance, receiverBalance=0;
+        let SenderName, ReceiverName ;
+try {
+
+    const senderAcct= await Balance.find({accountNumber:senderAcctNo}, ('Fullname Balance -_id')).exec();
+    const recieverAcct= await Balance.find({accountNumber:receiverAccount}, ('Fullname Balance -_id')).exec();
+
+    // fetching the balance
+
+    senderAcct.forEach(item=>{
+         senderBalance=(item.balance);
+         SenderName= item.fullName;
+
+        })
+
+     recieverAcct.forEach(item=>{
+        ReceiverName = item.fullName;
+        receiverBalance = item.balance;
+
+    })
+
+    if(senderBalance >= deposit){
+        senderBalance -=deposit;
+        receiverBalance +=deposit;
+
+        await Balance.updateOne({accountNumber:senderAcctNo},{$set: {Balance: senderBalance}})
+        await Balance.updateOne({accountNumber:receiverAccount},{$set:{Balance: receiverBalance}})
 
 
-//         })
+        const trans= new transaction({
 
-//         balance.save().then(()=>{
-//             res.send('Account creation was successfull')
-//         })
+            reference: `${reference}`,
+            senderName:SenderName,
+            senderAccount: senderAcctNo,
+            amount: deposit,
+            receiverName:ReceiverName,
+            receiverAccount: receiverAccount,
+            transferDescription: transferDescription,
+            createAt:Date().toLocaleString
+
+        })
+
+        trans.save().then(()=>{
+
+            console.log("Transfer done");
+
+        })
+
+        res.status(200).send(`Transfer done succesfully.`)
+
+    }
+
+    else{
+
+        res.send('Insufficient Balance')
+
+        }
+
+   
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+})
 
 
-//         res.status(200).send(`Transaction Successful. Your Account Balance is ${balance}`)
 
-//     } catch (error){
-//         res.status(400).json(error)
-//     }
-//    }
 
-//     })
 
     app.get('/balances/:accountNumber', async (req, res)=>{
         try {
