@@ -1,0 +1,22 @@
+{
+  "name": "transfer-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node transfer.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon transfer.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "joi": "^17.9.2",
+    "mongodb": "^5.6.0",
+    "mongoose": "^7.3.1",
+    "nodemon": "^2.0.22"
+  }
+}
